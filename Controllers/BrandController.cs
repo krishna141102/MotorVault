@@ -33,5 +33,15 @@ namespace MotorVault.Controllers
             }
             return BadRequest(ModelState);
         }
+
+        
+
+        [HttpGet]
+
+        public async Task<IEnumerable<BrandDto>> GetAll(IBrandRepository _brandRepository)
+        {
+            var brands = await _brandRepository.GetAllBrands();
+            return (IEnumerable<BrandDto>)_mapper.Map<IEnumerable<BrandDto>>(brands);
+        }
     }
 }

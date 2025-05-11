@@ -8,6 +8,7 @@ namespace MotorVault.Automapper
         public MappingProfiles()
         {
             CreateMap<Brand, CreateBrandDTO>().ReverseMap();
+            CreateMap<Brand, BrandDto>().ReverseMap();
         }
 
         

@@ -1,4 +1,5 @@
-﻿using MotorVault.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using MotorVault.Data;
 using MotorVault.Model.Domain;
 
 namespace MotorVault.Repository
@@ -14,6 +15,13 @@ namespace MotorVault.Repository
         {
             _dbcontext.Brands.Add(brand);
             await _dbcontext.SaveChangesAsync();
+        }
+
+        
+
+        async Task<IEnumerable<Brand>> IBrandRepository.GetAllBrands()
+        {
+            return await _dbcontext.Brands.ToListAsync();
         }
     }
 }
