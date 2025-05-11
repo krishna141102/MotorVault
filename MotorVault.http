@@ -1,0 +1,6 @@
+@MotorVault_HostAddress = http://localhost:5273
+
+GET {{MotorVault_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
