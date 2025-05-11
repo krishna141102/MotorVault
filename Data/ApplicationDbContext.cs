@@ -1,7 +1,7 @@
 ﻿//using MotorVault.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic.FileIO;
-using MotorVault.Model;
+using MotorVault.Model.Domain;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace MotorVault.Data
 {

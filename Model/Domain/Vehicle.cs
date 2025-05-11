@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualBasic.FileIO;
 
-namespace MotorVault.Model
+namespace MotorVault.Model.Domain
 {
     public class Vehicle
     {

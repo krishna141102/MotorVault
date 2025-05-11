@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MotorVault.Model
+namespace MotorVault.Model.Domain
 {
     public class CarType
     {
