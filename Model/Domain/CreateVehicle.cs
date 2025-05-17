@@ -1,15 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MotorVault.Model.DTO
+namespace MotorVault.Model.Domain
 {
-    public class BrandDto
+    public class CreateVehicle
     {
-        //public int Id { get; set; }
-
-  
         public string BrandName { get; set; }
         public string Country { get; set; }
-
 
         public string CarTypeName { get; set; }
         public string Description { get; set; }

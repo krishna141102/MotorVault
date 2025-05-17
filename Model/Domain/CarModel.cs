@@ -1,15 +1,27 @@
-﻿namespace MotorVault.Model.Domain
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MotorVault.Model.Domain
 {
     public class CarModel
     {
-        public int Id { get; set; }
+        [Key]
+        public Guid CarModelId { get; set; }
+        [Required]
+        [MaxLength(100)]
         public string ModelName { get; set; }
-        public int BrandId { get; set; }
-        public Brand Brand { get; set; }
-        public int CarTypeId { get; set; }
-        public CarType CarType { get; set; }
+        public Guid CarTypeId { get; set; }
+
+        [Required, MaxLength(4)]
         public int ReleaseYear { get; set; }
+        [Required,MaxLength(100)]
         public string EngineType { get; set; }
+        [Required, MaxLength(4)]
         public int HorsePower { get; set; }
+
+        [ForeignKey("CarTypeId")]
+        public CarType CarType { get; set; }
+
+        public ICollection<CarModel> CarModels { get; set; }
     }
 }

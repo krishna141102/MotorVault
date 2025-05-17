@@ -5,12 +5,16 @@ namespace MotorVault.Model.Domain
     
         public class Brand
         {
-            public int Id { get; set; }
+            [Key]
+            [Required]
+            public string BrandName { get; set; }
+
 
             [Required, MaxLength(100)] 
-            public string Name { get; set; }
             public string Country { get; set; }
-            
-        }
+
+        public ICollection<CarType> CarTypes { get; set; }
+
+    }
     
 }
