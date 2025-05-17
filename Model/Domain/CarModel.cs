@@ -22,6 +22,6 @@ namespace MotorVault.Model.Domain
         [ForeignKey("CarTypeId")]
         public CarType CarType { get; set; }
 
-        public ICollection<CarModel> CarModels { get; set; }
+        public ICollection<Vehicle> Vehicles { get; set; }
     }
 }

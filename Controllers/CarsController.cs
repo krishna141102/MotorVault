@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using MotorVault.Model.Domain;
+using MotorVault.Model.DTO;
 using MotorVault.Repository;
 
 namespace MotorVault.Controllers
@@ -16,18 +19,53 @@ namespace MotorVault.Controllers
             //_mapper = mapper;
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> CreateCar([FromBody] CreateCarDTO createCarDTO)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        // Logic to create a car
-        //        var car = _mapper.Map<Car>(createCarDTO);
-        //        await _carRepository.AddCar(car);
-        //        return Ok();
-        //    }
-        //    return BadRequest(ModelState);
-        //}
+        [HttpPost]
+        public async Task<IActionResult> CreateCar([FromForm] BrandDto brandDto)
+        {
+            if (ModelState.IsValid)
+            {
+                // Logic to create a car
+                var brand = new Brand
+                {
+                    BrandName = brandDto.BrandName,
+                    Country = brandDto.Country
+                };
+                var carType = new CarType
+                {
+                    BrandName = brandDto.BrandName,
+                    CarTypeName = brandDto.CarTypeName,
+                    Description = brandDto.Description
+                };
+                var carModel = new CarModel
+                {
+
+                    ModelName = brandDto.CarModelName,
+                    ReleaseYear = brandDto.ReleaseYear,
+                    EngineType = brandDto.EngineType,
+                    HorsePower = brandDto.HorsePower,
+
+                };
+                var memory = new MemoryStream();
+                await brandDto.formFile.CopyToAsync(memory);
+
+
+                var vehicle = new Vehicle
+                {
+                    CarModelId = carModel.CarModelId,
+                    Color = brandDto.color,
+                    Price = brandDto.Price,
+                    IsAvailable = brandDto.IsAvailable,
+                    FuelType = brandDto.FuelType,
+                    TransmissionType = brandDto.TransmissionType,
+                    Data = memory.ToArray(),
+                    ContentType = brandDto.formFile.ContentType,
+
+                };
+                await _carRepository.AddCar(brand, carType, carModel, vehicle);
+                return Ok();
+            }
+            return BadRequest(ModelState);
+        }
 
     }
 }

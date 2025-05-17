@@ -1,9 +1,12 @@
-﻿using MotorVault.Model.DTO;
+﻿using MotorVault.Model.Domain;
+using MotorVault.Model.DTO;
+
 
 namespace MotorVault.Repository
 {
     public interface ICarRepository
     {
-        public Task Create(BrandDto brandDto);
-    }
+        Task AddCar(Brand brand, CarType carType, CarModel carModel, Vehicle vehicle);
+
+    }   
 }
