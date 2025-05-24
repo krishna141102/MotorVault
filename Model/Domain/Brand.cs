@@ -15,6 +15,7 @@ namespace MotorVault.Model.Domain
 
         public ICollection<CarType> CarTypes { get; set; }
 
+        
     }
     
 }

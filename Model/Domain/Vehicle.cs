@@ -8,6 +8,9 @@ namespace MotorVault.Model.Domain
     {
         [Key]
         public Guid VehicleId { get; set; }
+        public string BrandName { get; set; }
+        public string CarTypeName { get; set; }
+        public string ModelName { get; set; }
         public Guid CarModelId { get; set; }
         [Required, MaxLength(100)]
         public string Color { get; set; }
@@ -19,9 +22,7 @@ namespace MotorVault.Model.Domain
         [Required, MaxLength(100)]
         public string TransmissionType { get; set; }
 
-      public byte[] Data { get; set; }
-        [Required]
-        public string ContentType { get; set; }
+
 
         [ForeignKey("CarModelId")]
         public CarModel CarModel { get; set; }

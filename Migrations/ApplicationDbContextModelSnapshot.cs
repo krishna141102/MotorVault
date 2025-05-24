@@ -52,7 +52,6 @@ namespace MotorVault.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("HorsePower")
-                        .HasMaxLength(4)
                         .HasColumnType("int");
 
                     b.Property<string>("ModelName")
@@ -61,7 +60,6 @@ namespace MotorVault.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("ReleaseYear")
-                        .HasMaxLength(4)
                         .HasColumnType("int");
 
                     b.HasKey("CarModelId");
@@ -128,21 +126,21 @@ namespace MotorVault.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("BrandName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("CarModelId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CarTypeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Color")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("Data")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("FuelType")
                         .IsRequired()
@@ -151,6 +149,10 @@ namespace MotorVault.Migrations
 
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
+
+                    b.Property<string>("ModelName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");

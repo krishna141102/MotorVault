@@ -7,6 +7,7 @@ namespace MotorVault.Model.Domain
     {
         [Key]
         public Guid CarTypeId { get; set; }
+        [Required]
         public string BrandName { get; set; }
 
 

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using MotorVault.Automapper;
 using MotorVault.Data;
 using MotorVault.Repository;
 
@@ -12,8 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddAutoMapper(typeof(Program));
-builder.Services.AddScoped<IBrandRepository, BrandRepository>();
+builder.Services.AddAutoMapper(typeof(MappingProfiles));
 builder.Services.AddScoped<ICarRepository, CarRepository>();
 
 var app = builder.Build();

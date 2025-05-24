@@ -6,23 +6,13 @@ namespace MotorVault.Model.DTO
     {
         //public int Id { get; set; }
 
-  
+
+        [Required(ErrorMessage = "Brand name is required.")]
         public string BrandName { get; set; }
+
+        [Required(ErrorMessage = "Country is required.")]
         public string Country { get; set; }
 
 
-        public string CarTypeName { get; set; }
-        public string Description { get; set; }
-        public string CarModelName { get; set; }
-        public int ReleaseYear { get; set; }
-        public string EngineType { get; set; }
-        public int HorsePower { get; set; }
-        public string color { get; set; }
-
-        public decimal Price { get; set; }
-        public bool IsAvailable { get; set; } = true;
-        public string FuelType { get; set; }
-        public string TransmissionType { get; set; }
-        public IFormFile formFile { get; set; }
     }
 }

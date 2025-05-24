@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MotorVault.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateInitial : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -65,19 +65,13 @@ namespace MotorVault.Migrations
                     CarModelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ModelName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CarTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ReleaseYear = table.Column<int>(type: "int", maxLength: 4, nullable: false),
+                    ReleaseYear = table.Column<int>(type: "int", nullable: false),
                     EngineType = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    HorsePower = table.Column<int>(type: "int", maxLength: 4, nullable: false),
-                    CarModelId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    HorsePower = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CarModels", x => x.CarModelId);
-                    table.ForeignKey(
-                        name: "FK_CarModels_CarModels_CarModelId1",
-                        column: x => x.CarModelId1,
-                        principalTable: "CarModels",
-                        principalColumn: "CarModelId");
                     table.ForeignKey(
                         name: "FK_CarModels_CarTypes_CarTypeId",
                         column: x => x.CarTypeId,
@@ -91,14 +85,15 @@ namespace MotorVault.Migrations
                 columns: table => new
                 {
                     VehicleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BrandName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CarTypeName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ModelName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CarModelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Color = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     IsAvailable = table.Column<bool>(type: "bit", nullable: false),
                     FuelType = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    TransmissionType = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Data = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    ContentType = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    TransmissionType = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -110,11 +105,6 @@ namespace MotorVault.Migrations
                         principalColumn: "CarModelId",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CarModels_CarModelId1",
-                table: "CarModels",
-                column: "CarModelId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CarModels_CarTypeId",
