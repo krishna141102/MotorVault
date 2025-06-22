@@ -12,10 +12,14 @@ namespace MotorVault.Repository
         Task<AddResult> AddCarModel(CarModel carModel,string brand,string cartype);
         Task<AddResult> AddVehicle(Vehicle vehicle);
 
-        //Task<IEnumerable<Brand>> GetAllBrands();
-        //Task<IEnumerable<String>> GetByCarType(string brand, string carType);
+        Task<IEnumerable<BrandDto>> GetAllBrands();
 
-        //Task<IEnumerable<CarType>> GetAllCarTypes(string brand);
+        Task<IEnumerable<string>> GetAllCarTypes(string brand);
+
+
+        Task<IEnumerable<CarModelDto>> GetCarModels(string brand, string carType);
+
+        Task<IEnumerable<VehicleDto>> GetAllVehicles(string brand, string carType, string carmodel);
 
     }   
 }

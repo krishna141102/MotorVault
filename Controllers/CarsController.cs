@@ -8,6 +8,7 @@ using MotorVault.Model.DTO;
 using MotorVault.Repository;
 using MotorVault.Enum;
 using AutoMapper;
+using Microsoft.OpenApi.Any;
 namespace MotorVault.Controllers
 {
     [Route("api/[controller]")]
@@ -86,7 +87,7 @@ namespace MotorVault.Controllers
         }
 
         [HttpPost("Vehicle")]
-        public async Task<IActionResult> CreateVehicle([FromForm]VehicleDto vehicle)
+        public async Task<IActionResult> CreateVehicle([FromForm] VehicleDto vehicle)
         {
             if (!ModelState.IsValid)
             {
@@ -106,29 +107,60 @@ namespace MotorVault.Controllers
 
                 _ => StatusCode(500, "Unexpected result.")
             };
-
-            //[HttpGet]
-            //public async Task<IActionResult> GetAllBrands()
-            //{
-            //    var brands = await _carRepository.GetAllBrands();
-
-            //return Ok(brands);
-            //}
-            //[HttpGet("CarTypes")]
-            //public async Task<IActionResult> GetAllCarTypes([FromQuery] string brand)
-            //{
-            //    var brands = await _carRepository.GetAllCarTypes(brand);
-            //    return Ok(brand);
-            //}
-            //[HttpGet("brand-cartype")]
-
-            //public async Task<IActionResult> GetByCarType([FromQuery] string BrandName,[FromQuery]string CarTypeName)
-            //{
-            //    var brand = await _carRepository.GetByCarType(BrandName, CarTypeName);
-            //    return Ok(brand);
-            //}
-
-
         }
+        [HttpGet]
+        public async Task<IActionResult> GetAllBrands()
+        {
+            var brands = await _carRepository.GetAllBrands();
+
+            if (brands == null || !brands.Any())
+            {
+                return NotFound("No brands found.");
+                // Or: return NoContent();
+            }
+
+            return Ok(brands);
+        }
+        [HttpGet("brands/{brand}/cartypes")]
+        public async Task<IActionResult> GetAllCarTypes([FromRoute] string brand)
+        {
+            var carTypes = await _carRepository.GetAllCarTypes(brand);
+
+            if (carTypes == null || !carTypes.Any())
+            {
+                return NotFound($"No car types found for brand '{brand}'.");
+            }
+
+            return Ok(carTypes);
+        }
+        [HttpGet("brands/{brandName}/cartypes/{carTypeName}/models")]
+        public async Task<IActionResult> GetModelsByBrandAndCarType(string brandName, string carTypeName)
+        {
+            var models = await _carRepository.GetCarModels(brandName, carTypeName);
+
+            if (!models.Any())
+            {
+                return NotFound("No models found for the specified brand and car type.");
+            }
+
+            return Ok(models);
+        }
+
+        [HttpGet("brands/{brandname}/cartypes/{carTypeName}/models/{carmodel}/vehicle")]
+
+        public async Task<IActionResult> GetVehicles(string brandname, string carTypeName, string carmodel)
+        {
+            var vehicles = await _carRepository.GetAllVehicles(brandname, carTypeName, carmodel);
+
+            if (!vehicles.Any())
+            {
+                return NotFound("No vehicles found for the specified brand, car type, and car model.");
+            }
+
+            return Ok(vehicles);
+        }
+
+
     }
-}
+    }
+

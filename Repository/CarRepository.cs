@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using MotorVault.Data;
 using MotorVault.Model.Domain;
 using MotorVault.Enum;
+using MotorVault.Model.DTO;
+using System.Diagnostics.Metrics;
 
 namespace MotorVault.Repository
 {
@@ -105,7 +107,6 @@ namespace MotorVault.Repository
                 if (existingBrand == null)
                     return AddResult.BrandNotFound;
 
-                // 2. Validate CarType
                 var existingCarType = await _dbContext.CarTypes
                     .FirstOrDefaultAsync(ct =>
                         ct.CarTypeName == vehicle.CarTypeName &&
@@ -114,7 +115,6 @@ namespace MotorVault.Repository
                 if (existingCarType == null)
                     return AddResult.CarTypeNotFound;
 
-                // 3. Validate CarModel
                 var existingCarModel = await _dbContext.CarModels
                     .FirstOrDefaultAsync(cm =>
                         cm.ModelName == vehicle.ModelName &&
@@ -123,22 +123,19 @@ namespace MotorVault.Repository
                 if (existingCarModel == null)
                     return AddResult.CarModelNotFound;
 
-                // 4. Assign CarModelId and other navigation values
                 vehicle.CarModelId = existingCarModel.CarModelId;
 
-                // Optional: Prevent duplicates (depends on your business logic)
                 var duplicate = await _dbContext.Vehicles
                     .FirstOrDefaultAsync(v =>
                         v.ModelName == vehicle.ModelName &&
-                        v.Color== vehicle.Color &&
-                        v.Price == vehicle.Price && 
-                        v.FuelType==vehicle.FuelType && 
-                        v.TransmissionType==vehicle.TransmissionType);
+                        v.Color == vehicle.Color &&
+                        v.Price == vehicle.Price &&
+                        v.FuelType == vehicle.FuelType &&
+                        v.TransmissionType == vehicle.TransmissionType);
 
                 if (duplicate != null)
                     return AddResult.AlreadyExists;
 
-                // 5. Add to DB
                 _dbContext.Vehicles.Add(vehicle);
                 await _dbContext.SaveChangesAsync();
                 return AddResult.Created;
@@ -150,25 +147,91 @@ namespace MotorVault.Repository
             }
         }
 
-        //public async Task<IEnumerable<Brand>> GetAllBrands()
-        //{
-        //    var brands= await _dbContext.Brands.ToListAsync();
-        //    return brands;
-        //}
-        //public async Task<IEnumerable<string>> GetAllCarTypes(string brand)
-        //{
-        //    return await _dbContext.CarTypes.Where(ct => ct.BrandName == brand).Select(ct=> ct.CarTypeName).ToListAsync();
+        public async Task<IEnumerable<BrandDto>> GetAllBrands()
+        {
+            try
+            {
+                var brands = await _dbContext.Brands.Select(
+                    b => new BrandDto { BrandName = b.BrandName, Country = b.Country }).ToListAsync();
+                return brands;
+            }
+            catch (Exception)
+            {
+                return Enumerable.Empty<BrandDto>();
+            }
+        }
+        public async Task<IEnumerable<string>> GetAllCarTypes(string brand)
+        {
 
-        //}
+            try
+            {
+                return await _dbContext.CarTypes
+                    .Where(ct => ct.BrandName == brand)
+                    .Select(ct => ct.CarTypeName)
+                    .ToListAsync();
+            }
+            catch (Exception)
+            {
+                return Enumerable.Empty<string>();
+            }
+
+        }
 
 
 
-        //public async Task<IEnumerable<CarType>> GetByCarType(string brand, string carType)
-        //{
-        //    var findedCarType = await _dbContext.CarTypes.Where(ct => ct.BrandName == brand & ct.CarTypeName == carType).ToListAsync();
+        public async Task<IEnumerable<CarModelDto>> GetCarModels(string brand, string carType)
+        {
+            try
+            {
+                var cartype= await _dbContext.CarTypes
+                    .FirstOrDefaultAsync(ct => ct.CarTypeName == carType && ct.BrandName == brand);
+                return await _dbContext.CarModels.Where(ct => ct.CarType.BrandName == brand && ct.CarTypeId == cartype.CarTypeId).Select(c => new CarModelDto
+                {
+                    BrandName=c.CarType.BrandName,
+                    CarTypeName=c.CarType.CarTypeName,
+                    ModelName = c.ModelName,
+                    ReleaseYear = c.ReleaseYear,
+                    EngineType = c.EngineType,
+                    HorsePower = c.HorsePower
 
-        //    return findedCarType;
-        //}
+                }).ToListAsync();
+
+            }
+            catch (Exception)
+            {
+                return Enumerable.Empty<CarModelDto>();
+            }
+        }
+        public async Task<IEnumerable<VehicleDto>> GetAllVehicles(string brand, string carType, string carmodel)
+        {
+            try
+            {
+                return await _dbContext.Vehicles
+                    .Where(v =>
+                        v.BrandName == brand &&
+                        v.CarTypeName == carType &&
+                        v.ModelName == carmodel)
+                    .Select(v => new VehicleDto
+                    {
+                        BrandName = v.BrandName,
+                        CarTypeName = v.CarTypeName,
+                        ModelName = v.ModelName,
+                        Color = v.Color,
+                        Price = v.Price,
+                        IsAvailable = v.IsAvailable,
+                        FuelType = v.FuelType,
+                        TransmissionType = v.TransmissionType
+                    })
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Error] {ex.Message}");
+                return Enumerable.Empty<VehicleDto>();
+            }
+        }
+
     }
 }
+
 
