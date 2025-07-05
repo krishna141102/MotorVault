@@ -1,14 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace MotorVault.Model.Domain
+﻿namespace MotorVault.Model.Domain
 {
-    
     public class User
     {
-        public int Id { get; set; }
-        [Required] public string Username { get; set; }
-        [Required] public string PasswordHash { get; set; }
-        [Required] public string Role { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public string Username { get; set; }
+        public string Password { get; set; } // Store hashed in real app
+        public string Role { get; set; }
     }
-
 }

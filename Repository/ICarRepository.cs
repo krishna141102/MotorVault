@@ -21,5 +21,17 @@ namespace MotorVault.Repository
 
         Task<IEnumerable<VehicleDto>> GetAllVehicles(string brand, string carType, string carmodel);
 
+        Task<AddResult> UpdateBrand(string brandName, BrandDto updatedBrand);
+
+        Task<AddResult> UpdateCarType(string carTypeName, CarTypeDto dto);
+
+        Task<AddResult> UpdateCarModel(string modelName, CarModelDto dto);
+
+        Task<AddResult> UpdateVehicle(Guid vehicleId, VehicleDto dto);
+
+        Task<AddResult> DeleteCarType(string brand,string carTypeName);
+        Task<AddResult> DeleteCarModel(string brand,string cartype,string modelName);
+        Task<AddResult> DeleteVehicle(Guid vehicleId);
+
     }   
 }

@@ -15,7 +15,7 @@ namespace MotorVault.Data
         public DbSet<CarType> CarTypes { get; set; }
         public DbSet<CarModel> CarModels { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
-        public DbSet<User> users { get; set; }
+        public DbSet<User> Users { get; set; }
 
         //Entity Relationships
         //One Brand → Many CarModels

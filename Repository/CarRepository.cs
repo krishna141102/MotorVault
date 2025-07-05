@@ -231,6 +231,153 @@ namespace MotorVault.Repository
             }
         }
 
+        public async Task<AddResult> UpdateBrand(string brandName, BrandDto updatedBrand)
+        {
+            try
+            {
+                var brand = await _dbContext.Brands.FirstOrDefaultAsync(b => b.BrandName == brandName);
+                if (brand == null)
+                    return AddResult.BrandNotFound;
+
+                brand.BrandName = updatedBrand.BrandName;
+                brand.Country = updatedBrand.Country;
+
+                _dbContext.Brands.Update(brand);
+                await _dbContext.SaveChangesAsync();
+                return AddResult.Created;
+            }
+            catch
+            {
+                return AddResult.Failed;
+            }
+        }
+
+        public async Task<AddResult> UpdateCarType(string carTypeName, CarTypeDto dto)
+        {
+            try
+            {
+                var carType = await _dbContext.CarTypes.FirstOrDefaultAsync(ct => ct.CarTypeName == carTypeName && ct.BrandName == dto.BrandName);
+                if (carType == null)
+                    return AddResult.CarTypeNotFound;
+
+                carType.CarTypeName = dto.CarTypeName;
+                carType.BrandName = dto.BrandName;
+
+                _dbContext.CarTypes.Update(carType);
+                await _dbContext.SaveChangesAsync();
+                return AddResult.Created;
+            }
+            catch
+            {
+                return AddResult.Failed;
+            }
+        }
+
+        public async Task<AddResult> UpdateCarModel(string modelName, CarModelDto dto)
+        {
+            try
+            {
+                var carType = await _dbContext.CarTypes.FirstOrDefaultAsync(ct => ct.CarTypeName == dto.CarTypeName && ct.BrandName == dto.BrandName);
+                if (carType == null)
+                    return AddResult.CarTypeNotFound;
+
+                var model = await _dbContext.CarModels.FirstOrDefaultAsync(cm => cm.ModelName == modelName && cm.CarTypeId == carType.CarTypeId);
+                if (model == null)
+                    return AddResult.CarModelNotFound;
+
+                model.ModelName = dto.ModelName;
+                model.EngineType = dto.EngineType;
+                model.HorsePower = dto.HorsePower;
+                model.ReleaseYear = dto.ReleaseYear;
+
+                _dbContext.CarModels.Update(model);
+                await _dbContext.SaveChangesAsync();
+                return AddResult.Created;
+            }
+            catch
+            {
+                return AddResult.Failed;
+            }
+        }
+
+
+        public async Task<AddResult> UpdateVehicle(Guid vehicleId, VehicleDto dto)
+        {
+            try
+            {
+                var vehicle = await _dbContext.Vehicles.FirstOrDefaultAsync(v => v.VehicleId == vehicleId);
+                if (vehicle == null)
+                    return AddResult.CarModelNotFound;
+
+                vehicle.Color = dto.Color;
+                vehicle.Price = dto.Price;
+                vehicle.IsAvailable = dto.IsAvailable;
+                vehicle.FuelType = dto.FuelType;
+                vehicle.TransmissionType = dto.TransmissionType;
+
+                _dbContext.Vehicles.Update(vehicle);
+                await _dbContext.SaveChangesAsync();
+                return AddResult.Created;
+            }
+            catch
+            {
+                return AddResult.Failed;
+            }
+        }
+
+        public async Task<AddResult> DeleteCarType(string brand,string carTypeName)
+        {
+            try
+            {
+                var carType = await _dbContext.CarTypes.FirstOrDefaultAsync(ct => ct.BrandName==brand && ct.CarTypeName == carTypeName);
+                if (carType == null)
+                    return AddResult.CarTypeNotFound;
+
+                _dbContext.CarTypes.Remove(carType);
+                await _dbContext.SaveChangesAsync();
+                return AddResult.Created;
+            }
+            catch
+            {
+                return AddResult.Failed;
+            }
+        }
+
+        public async Task<AddResult> DeleteCarModel(string brand,string cartype,string modelName)
+        {
+            try
+            {
+                var model = await _dbContext.CarModels.FirstOrDefaultAsync(cm =>cm.CarType.BrandName==brand && cm.CarType.CarTypeName==cartype &&  cm.ModelName == modelName);
+                if (model == null)
+                    return AddResult.CarModelNotFound;
+
+                _dbContext.CarModels.Remove(model);
+                await _dbContext.SaveChangesAsync();
+                return AddResult.Created;
+            }
+            catch
+            {
+                return AddResult.Failed;
+            }
+        }
+
+        public async Task<AddResult> DeleteVehicle(Guid vehicleId)
+        {
+            try
+            {
+                var vehicle = await _dbContext.Vehicles.FirstOrDefaultAsync(v => v.VehicleId == vehicleId);
+                if (vehicle == null)
+                    return AddResult.CarModelNotFound;
+
+                _dbContext.Vehicles.Remove(vehicle);
+                await _dbContext.SaveChangesAsync();
+                return AddResult.Created;
+            }
+            catch
+            {
+                return AddResult.Failed;
+            }
+        }
     }
 }
 

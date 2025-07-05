@@ -9,10 +9,12 @@ using MotorVault.Repository;
 using MotorVault.Enum;
 using AutoMapper;
 using Microsoft.OpenApi.Any;
+using Microsoft.AspNetCore.Authorization;
 namespace MotorVault.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CarsController : ControllerBase
     {
         private readonly ICarRepository _carRepository;
@@ -22,7 +24,7 @@ namespace MotorVault.Controllers
             _carRepository = carRepository;
             _mapper = mapper;
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost("Brand")]
         public async Task<IActionResult> CreateBrand([FromForm] BrandDto brandDto)
         {
@@ -159,8 +161,98 @@ namespace MotorVault.Controllers
 
             return Ok(vehicles);
         }
+        [HttpPut("Brand/{brandName}")]
+        public async Task<IActionResult> UpdateBrand(string brandName, [FromForm] BrandDto updatedBrand)
+        {
+            var result = await _carRepository.UpdateBrand(brandName, updatedBrand);
+            return result switch
+            {
+                AddResult.Created => Ok("Brand updated successfully."),
+                AddResult.BrandNotFound => NotFound("Brand not found."),
+                AddResult.Failed => StatusCode(500, "Failed to update brand."),
+                _ => StatusCode(500, "Unexpected result.")
+            };
+        }
+
+        [HttpPut("Brand/CarType/{carTypeName}")]
+        public async Task<IActionResult> UpdateCarType(string carTypeName, [FromForm] CarTypeDto dto)
+        {
+            var result = await _carRepository.UpdateCarType(carTypeName, dto);
+            return result switch
+            {
+                AddResult.Created => Ok("Car type updated successfully."),
+                AddResult.CarTypeNotFound => NotFound("Car type not found."),
+                AddResult.Failed => StatusCode(500, "Failed to update car type."),
+                _ => StatusCode(500, "Unexpected result.")
+            };
+        }
+
+        [HttpPut("Brand/CarType/CarModel/{modelName}")]
+        public async Task<IActionResult> UpdateCarModel(string modelName, [FromForm] CarModelDto dto)
+        {
+            var result = await _carRepository.UpdateCarModel(modelName, dto);
+            return result switch
+            {
+                AddResult.Created => Ok("Car model updated successfully."),
+                AddResult.CarModelNotFound => NotFound("Car model not found."),
+                AddResult.Failed => StatusCode(500, "Failed to update car model."),
+                _ => StatusCode(500, "Unexpected result.")
+            };
+        }
+
+        [HttpPut("Vehicle/{vehicleId:guid}")]
+        public async Task<IActionResult> UpdateVehicle(Guid vehicleId, [FromForm] VehicleDto dto)
+        {
+            var result = await _carRepository.UpdateVehicle(vehicleId, dto);
+            return result switch
+            {
+                AddResult.Created => Ok("Vehicle updated successfully."),
+                AddResult.Failed => StatusCode(500, "Failed to update vehicle."),
+                _ => NotFound("Vehicle not found.")
+            };
+        }
+
+        [HttpDelete("Brand/{brand}/CarType/{carTypeName}")]
+        public async Task<IActionResult> DeleteCarType(string brand,string carTypeName)
+        {
+            var result = await _carRepository.DeleteCarType(brand,carTypeName);
+            return result switch
+            {
+                AddResult.Created => Ok("Car type deleted successfully."),
+                AddResult.CarTypeNotFound => NotFound("Car type not found."),
+                AddResult.Failed => StatusCode(500, "Failed to delete car type."),
+                _ => StatusCode(500, "Unexpected result.")
+            };
+        }
+
+        [HttpDelete("Brand/{brand}/CarType/{cartype}/CarModel/{modelName}")]
+        public async Task<IActionResult> DeleteCarModel(string brand,string cartype,string modelName)
+        {
+            var result = await _carRepository.DeleteCarModel(brand,cartype,modelName);
+            return result switch
+            {
+                AddResult.Created => Ok("Car model deleted successfully."),
+                AddResult.CarModelNotFound => NotFound("Car model not found."),
+                AddResult.Failed => StatusCode(500, "Failed to delete car model."),
+                _ => StatusCode(500, "Unexpected result.")
+            };
+        }
+
+        [HttpDelete("Vehicle/{vehicleId:guid}")]
+        public async Task<IActionResult> DeleteVehicle(Guid vehicleId)
+        {
+            var result = await _carRepository.DeleteVehicle(vehicleId);
+            return result switch
+            {
+                AddResult.Created => Ok("Vehicle deleted successfully."),
+                AddResult.Failed => StatusCode(500, "Failed to delete vehicle."),
+                _ => NotFound("Vehicle not found.")
+            };
+        }
+
+
 
 
     }
-    }
+}
 
