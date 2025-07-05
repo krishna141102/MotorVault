@@ -21,7 +21,6 @@ namespace MotorVault.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // === Seed Brands ===
             var brands = new[]
             {
                 new Brand { BrandName = "BMW", Country = "Germany" },
@@ -37,15 +36,12 @@ namespace MotorVault.Data
             };
             modelBuilder.Entity<Brand>().HasData(brands);
 
-            // === Helper: Deterministic GUID Generator ===
             Guid GuidFrom(string input)
             {
                 using var md5 = MD5.Create();
                 byte[] hash = md5.ComputeHash(Encoding.UTF8.GetBytes(input));
                 return new Guid(hash.Take(16).ToArray());
             }
-
-            // === Seed CarTypes (3 per brand) ===
             var carTypes = new List<CarType>();
             string[] carTypeNames = { "Sedan", "SUV", "Coupe" };
 
@@ -64,7 +60,6 @@ namespace MotorVault.Data
             }
             modelBuilder.Entity<CarType>().HasData(carTypes);
 
-            // === Seed CarModels (5 per car type) ===
             var carModels = new List<CarModel>();
             foreach (var carType in carTypes)
             {
@@ -84,7 +79,6 @@ namespace MotorVault.Data
             }
             modelBuilder.Entity<CarModel>().HasData(carModels);
 
-            // === Seed Vehicles (5 per car model) ===
             var vehicles = new List<Vehicle>();
             var colors = new[] { "Black", "White", "Blue", "Red", "Silver" };
             var transmissions = new[] { "Automatic", "Manual" };

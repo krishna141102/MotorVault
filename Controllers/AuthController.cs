@@ -48,7 +48,6 @@ public class AuthController : ControllerBase
             return BadRequest(createResult.Errors.Select(e => e.Description));
         }
 
-        // Add roles (if any)
         if (userDto.Roles != null && userDto.Roles.Any())
         {
             foreach (var role in userDto.Roles)
@@ -93,7 +92,7 @@ public class AuthController : ControllerBase
         }
          return Unauthorized("Invalid username or password.");
 
-        // Generate JWT token
+        
         
     }
 }
