@@ -24,8 +24,12 @@ namespace MotorVault.Controllers
             _carRepository = carRepository;
             _mapper = mapper;
         }
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost("Brand")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [Authorize(Roles ="Writer")]
         public async Task<IActionResult> CreateBrand([FromForm] BrandDto brandDto)
         {
             if (!ModelState.IsValid)
@@ -43,7 +47,9 @@ namespace MotorVault.Controllers
                 _ => StatusCode(500, "Unexpected result.")
             };
         }
+
         [HttpPost("Brand/CarType")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> CreateCarType([FromForm] CarTypeDto CarType)
         {
             if (!ModelState.IsValid)
@@ -66,6 +72,7 @@ namespace MotorVault.Controllers
 
         }
         [HttpPost("Brand/CarType/CarModel")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> CreateCarModel([FromForm] CarModelDto carModelDto)
         {
             if (!ModelState.IsValid)
@@ -89,6 +96,7 @@ namespace MotorVault.Controllers
         }
 
         [HttpPost("Vehicle")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> CreateVehicle([FromForm] VehicleDto vehicle)
         {
             if (!ModelState.IsValid)
@@ -105,12 +113,13 @@ namespace MotorVault.Controllers
                 AddResult.CarTypeNotFound => NotFound("Car type not found."),
 
                 AddResult.CarModelNotFound => NotFound("Car model not found."),
-                AddResult.Failed => StatusCode(500, "An error ccurred while saving the car model."),
+                AddResult.Failed => StatusCode(500, "An error occurred while saving the car model."),
 
                 _ => StatusCode(500, "Unexpected result.")
             };
         }
         [HttpGet]
+        [Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetAllBrands()
         {
             var brands = await _carRepository.GetAllBrands();
@@ -123,19 +132,22 @@ namespace MotorVault.Controllers
 
             return Ok(brands);
         }
-        [HttpGet("brands/{brand}/cartypes")]
-        public async Task<IActionResult> GetAllCarTypes([FromRoute] string brand)
+        [HttpGet("brands/{brandName}/cartypes")]
+        [Authorize(Roles = "Reader")]
+
+        public async Task<IActionResult> GetAllCarTypes(string brandName)
         {
-            var carTypes = await _carRepository.GetAllCarTypes(brand);
+            var carTypes = await _carRepository.GetAllCarTypes(brandName);
 
             if (carTypes == null || !carTypes.Any())
             {
-                return NotFound($"No car types found for brand '{brand}'.");
+                return NotFound($"No car types found for brand '{brandName}'.");
             }
 
             return Ok(carTypes);
         }
         [HttpGet("brands/{brandName}/cartypes/{carTypeName}/models")]
+        [Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetModelsByBrandAndCarType(string brandName, string carTypeName)
         {
             var models = await _carRepository.GetCarModels(brandName, carTypeName);
@@ -149,6 +161,7 @@ namespace MotorVault.Controllers
         }
 
         [HttpGet("brands/{brandname}/cartypes/{carTypeName}/models/{carmodel}/vehicle")]
+        [Authorize(Roles = "Reader")]
 
         public async Task<IActionResult> GetVehicles(string brandname, string carTypeName, string carmodel)
         {
@@ -162,6 +175,7 @@ namespace MotorVault.Controllers
             return Ok(vehicles);
         }
         [HttpPut("Brand/{brandName}")]
+        [Authorize(Roles = "Writer,Reader")]
         public async Task<IActionResult> UpdateBrand(string brandName, [FromForm] BrandDto updatedBrand)
         {
             var result = await _carRepository.UpdateBrand(brandName, updatedBrand);
@@ -175,6 +189,7 @@ namespace MotorVault.Controllers
         }
 
         [HttpPut("Brand/CarType/{carTypeName}")]
+        [Authorize(Roles = "Writer,Reader")]
         public async Task<IActionResult> UpdateCarType(string carTypeName, [FromForm] CarTypeDto dto)
         {
             var result = await _carRepository.UpdateCarType(carTypeName, dto);
@@ -188,6 +203,7 @@ namespace MotorVault.Controllers
         }
 
         [HttpPut("Brand/CarType/CarModel/{modelName}")]
+        [Authorize(Roles = "Writer,Reader")]
         public async Task<IActionResult> UpdateCarModel(string modelName, [FromForm] CarModelDto dto)
         {
             var result = await _carRepository.UpdateCarModel(modelName, dto);
@@ -201,6 +217,7 @@ namespace MotorVault.Controllers
         }
 
         [HttpPut("Vehicle/{vehicleId:guid}")]
+        [Authorize(Roles = "Writer,Reader")]
         public async Task<IActionResult> UpdateVehicle(Guid vehicleId, [FromForm] VehicleDto dto)
         {
             var result = await _carRepository.UpdateVehicle(vehicleId, dto);
@@ -213,6 +230,7 @@ namespace MotorVault.Controllers
         }
 
         [HttpDelete("Brand/{brand}/CarType/{carTypeName}")]
+        [Authorize(Roles = "Writer,Reader")]
         public async Task<IActionResult> DeleteCarType(string brand,string carTypeName)
         {
             var result = await _carRepository.DeleteCarType(brand,carTypeName);
@@ -226,6 +244,7 @@ namespace MotorVault.Controllers
         }
 
         [HttpDelete("Brand/{brand}/CarType/{cartype}/CarModel/{modelName}")]
+        [Authorize(Roles = "Writer,Reader")]
         public async Task<IActionResult> DeleteCarModel(string brand,string cartype,string modelName)
         {
             var result = await _carRepository.DeleteCarModel(brand,cartype,modelName);
@@ -239,6 +258,7 @@ namespace MotorVault.Controllers
         }
 
         [HttpDelete("Vehicle/{vehicleId:guid}")]
+        [Authorize(Roles = "Writer,Reader")]
         public async Task<IActionResult> DeleteVehicle(Guid vehicleId)
         {
             var result = await _carRepository.DeleteVehicle(vehicleId);

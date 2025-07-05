@@ -2,7 +2,7 @@
 
 namespace MotorVault.Model.DTO
 {
-    public class UserDto
+    public class LoginDto
     {
         [Required]
         [DataType(DataType.EmailAddress)]
@@ -10,7 +10,6 @@ namespace MotorVault.Model.DTO
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }
-        public List<string> Roles { get; set; }
     }
 
 }
